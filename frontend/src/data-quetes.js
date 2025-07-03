@@ -55,5 +55,12 @@ export const quetes = [
     lieu: "Gare de Croix-Wasquehal",
     latitude: 50.6783,
     longitude: 3.1525
+  },
+  {
+    id: 9,
+    nom: "25 rue isaac Holden",
+    lieu: "25 rue isaac Holden, Croix",
+    latitude: 50.6717,
+    longitude: 3.1491
   }
 ]; 
