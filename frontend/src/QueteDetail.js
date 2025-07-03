@@ -57,6 +57,7 @@ const QueteDetail = () => {
   const prevNiveau = useRef(niveaux[0]);
   const audioRef = useRef(null);
   const bipTimeout = useRef(null);
+  const [showWin, setShowWin] = useState(false);
 
   // Gestion de la géolocalisation et du guidage
   useEffect(() => {
@@ -149,6 +150,33 @@ const QueteDetail = () => {
     );
   }
 
+  // Animation de victoire (confettis simples en CSS + texte)
+  function WinAnimation() {
+    return (
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        background: 'rgba(255,255,255,0.85)',
+        zIndex: 9999,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        animation: 'fadeIn 0.5s',
+      }}>
+        <div className="confetti-container">
+          {[...Array(30)].map((_, i) => (
+            <div key={i} className="confetti" style={{left: `${Math.random()*100}%`, animationDelay: `${Math.random()}s`}} />
+          ))}
+        </div>
+        <h1 style={{fontSize: 48, color: '#ff1744', textShadow: '2px 2px 8px #fff', animation: 'pop 1s'}}>Vous avez gagné !</h1>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h2>{quete.nom}</h2>
@@ -178,17 +206,21 @@ const QueteDetail = () => {
               <div style={{textAlign: 'center', fontSize: 16}}>{distance && distance.toFixed(1)} m</div>
             </div>
           </div>
-          {unlocked ? (
-            <button onClick={() => fetch("/api/quete/valider", {method: "POST"})}>
+          {unlocked && !showWin ? (
+            <button onClick={() => {
+              setShowWin(true);
+              setTimeout(() => setShowWin(false), 3500);
+            }}>
               Valider la quête !
             </button>
-          ) : (
+          ) : !unlocked ? (
             <button disabled>Approche-toi pour valider</button>
-          )}
+          ) : null}
         </>
       ) : (
         <p>Recherche de ta position...</p>
       )}
+      {showWin && <WinAnimation />}
       <style>{`
         @keyframes pulse {
           0% { box-shadow: 0 0 0 0 ${niveau.couleur}; }
@@ -199,6 +231,37 @@ const QueteDetail = () => {
           0% { opacity: 0.3; }
           50% { opacity: 0.7; }
           100% { opacity: 0.3; }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes pop {
+          0% { transform: scale(0.7); opacity: 0; }
+          60% { transform: scale(1.2); opacity: 1; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        .confetti-container {
+          position: absolute;
+          width: 100vw;
+          height: 100vh;
+          top: 0;
+          left: 0;
+          pointer-events: none;
+        }
+        .confetti {
+          position: absolute;
+          width: 12px;
+          height: 24px;
+          background: hsl(${Math.random()*360}, 90%, 60%);
+          border-radius: 3px;
+          opacity: 0.8;
+          animation: confetti-fall 1.8s cubic-bezier(.62,.01,.5,1) forwards;
+        }
+        @keyframes confetti-fall {
+          0% { top: -30px; transform: rotate(0deg); }
+          80% { opacity: 1; }
+          100% { top: 100vh; transform: rotate(360deg); opacity: 0.2; }
         }
       `}</style>
     </div>

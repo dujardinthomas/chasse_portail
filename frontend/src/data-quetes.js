@@ -62,5 +62,12 @@ export const quetes = [
     lieu: "25 rue isaac Holden, Croix",
     latitude: 50.6717,
     longitude: 3.1491
+  },
+  {
+    id: 10,
+    nom: "passage pieton metro",
+    lieu: "passage pieton metro, Croix",
+    latitude: 50.6740,
+    longitude: 3.1468
   }
 ]; 
